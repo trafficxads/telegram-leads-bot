@@ -16,18 +16,53 @@ logger = logging.getLogger(__name__)
 BOT_TOKEN = "7825910857:AAFohCr9B06mIDQGxfZMI_m_Yf2UbWI3lTc"
 SHEET_ID = "14Lgu4JV5Nn2-r6kh8R3MHk11ai7sUul5akfNpv0xFtc"
 
-# HARDCODED Google credentials
-GOOGLE_CREDS_JSON = """
-{ your service account JSON here }
-"""  # (keep your full JSON)
+# HARDCODED Google credentials (copied from the JSON you uploaded)
+GOOGLE_CREDS_JSON = {
+  "type": "service_account",
+  "project_id": "black-network-451123-f9",
+  "private_key_id": "7add59e64e112b3f1f877c9ad4130cb34f4ddeb4",
+  "private_key": """-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCztiMpxU5jlpQ5
+GECmmaAw0yKyrHx0AgTgUauzzdJvi5AV+e4xywny53oqE/36UIUhI9CEk3VVrEll
+09SZxAY/4PlrUydiawjMwaAzgt8/JeaivFZhDDhrJjVTNB5e+eB7FX78U2XinlHD
+h9mEToKWMHLAM/lLSKTmJ4xBVvRhXadPUC/9wkIjsYMRacSa942q6J3tRuSV+lSD
+3MywTYp4mYc3V159SBzahb+Bk7WKXwCcokBd5V8R1DlwJ0zohIb+qY/b0LQqlm0R
+avnrsyKhr2L7w2GN3q6gfoI8lEX0qz1U4L+4OZ/Sl2ZETcg0TObOs5+PPZZGi7Z4
+RLGBEOpFAgMBAAECggEAIr5aj3uOE2pb9yrVavAl/HKBUY5P1ETEqRKZEb6/yaFv
+hpQmhRlmL8ApSePKFSAGkPjh2hPBGkJgAVACGQVBGQ33YpS1t00Oqzle7b6GRyje
+bUVgpMwOR0bghdi8a2u/RsSJ46IC/1xQ3e7QcogULpGoybhyoKene7iXINW9EuqL
+iOnQL3uJ5i/l0OGiKGxNOqlnmohDka2oKV+G7+ObniCrs5wzqjoATQC1a6ott4D5
+QL45o/+5uMzUZRJBv29EGPM+cKw6CywaPwHL58BhZfMLGGVOCJbrom5jrTqW3jyd
+oqnWJRtTYCLAoL/5+DqPoc/pXotPjf2aE2sCn4FbsQKBgQDfuZpK+F94X/2JY6vV
+FhwT4d8hare9HrLFzwZ7SKWgpAKN66cZdlY6p57PbSMXY4y70UHlWHs/2l7Lx1eW
+RJIkuORC3AQqmMjiH3l9t7WdGdWlZuDGikTCxkzjK0hV+FArL7tqhULo4BYGDVHV
+jbtW+UB/ssn9fzSJdg1hfcDWFQKBgQDNoxGoZo+7KCkP50QcI+FOiaL/RZGPwRVH
+8D2VZAc6vaqm1Yr54b/e/w0i9UbsKKLNbNLIZTaa9eIJDn570LcgqHly9zqQOA4j
+oXEBKjh3Uzfb1FSOmbBF/S2QJNgun8rz2joaKB6QXfJpT9v22V97Y5rVViqvjGet
+P4kyX0Z/cQKBgDgL5S1W34PmeDuM7qUpLsuEUEOs2m7UW/DWFkeYQXXm4ITxPiFQ
+1fVHvK82Jg5b8Au1No7gBbBPYmQmgjiw4PO2Jejh+WE6eUi8ndDyztqWeEFBbpoO
+VX998hEO7MYsuNi40niy/bodOSc2+wNGyGHXe2MCRTvuPBkbq+p6eG6pAoGBAITd
+7WXaxtnNzCJLcnWgNU7Sna/E2pWA02hE8PWayRUKQb5EUeS9GYVTVMCWrLmgU/jZ
+bKQwyYR8hQ0HAXCs3fZLBRXkakGPBou9H0/6YLuw2HHAktYEtaGzQYJWXBxcAP1o
+rowCCiWLnjqvb9figdAu/ncDktcUqFSHrfUPHHTxAoGBAM1k7qMXvaKH42wd6MFE
+2PonzgNAKJ4nVMRiyiEOHj2z6QLj5O+yPKYdMpjSa8pAfq0iU/fvCQNrcBbnHmTv
+bpGJC3zVMysPWsfSOi5fZABu6MCQu3Kba6wpqkEBfwakvqUpbjuSSapuz5Gma6J3
+o0mABaJOvSpojKcF/9UXzIOn
+-----END PRIVATE KEY-----""",
+  "client_email": "telegrambotsheetsaccess@black-network-451123-f9.iam.gserviceaccount.com",
+  "client_id": "106711742149730374889",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/telegrambotsheetsaccess%40black-network-451123-f9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
 
 # Connect to Google Sheets
 sheet = None
 try:
-    creds_info = json.loads(GOOGLE_CREDS_JSON)
-    creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
     creds = Credentials.from_service_account_info(
-        creds_info, scopes=["https://www.googleapis.com/auth/spreadsheets"]
+        GOOGLE_CREDS_JSON, scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     gs_client = gspread.authorize(creds)
     spreadsheet = gs_client.open_by_key(SHEET_ID)
@@ -39,10 +74,7 @@ def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     chat_id = update.effective_chat.id
 
-    token = None
-    if context.args:
-        token = context.args[0]
-
+    token = context.args[0] if context.args else None
     username = user.username or ""
     user_id = user.id
     now = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
@@ -66,7 +98,6 @@ def start(update: Update, context: CallbackContext) -> None:
         except Exception as e:
             logger.error(f"Error updating sheet: {e}")
 
-    # Updated welcome message
     welcome_text = f"""🎉 Welcome {user.first_name}!
 
 🚀 Thanks for your interest in TipsterGuruGoat!
@@ -89,7 +120,6 @@ Let's win together! 💸
 def main() -> None:
     updater = Updater(BOT_TOKEN, use_context=True)
     dp = updater.dispatcher
-
     dp.add_handler(CommandHandler("start", start))
 
     updater.start_polling()
