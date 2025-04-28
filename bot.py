@@ -1,23 +1,22 @@
-import os
 import logging
 from datetime import datetime
+import json
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext
 
 import gspread
 from google.oauth2.service_account import Credentials
-import json
 
 # Enable logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load configuration
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-SHEET_ID = os.environ.get("SHEET_ID")
+# HARDCODED configuration
+BOT_TOKEN = "7825910857:AAFohCr9B06mIDQGxfZMI_m_Yf2UbWI3lTc"
+SHEET_ID = "14Lgu4JV5Nn2-r6kh8R3MHk11ai7sUul5akfNpv0xFtc"
 
-# Hardcoded Google credentials
+# HARDCODED Google credentials
 GOOGLE_CREDS_JSON = """
 {
   "type": "service_account",
@@ -36,19 +35,16 @@ GOOGLE_CREDS_JSON = """
 
 # Connect to Google Sheets
 sheet = None
-if GOOGLE_CREDS_JSON and SHEET_ID:
+try:
     creds_info = json.loads(GOOGLE_CREDS_JSON)
     creds = Credentials.from_service_account_info(
         creds_info, scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
     gs_client = gspread.authorize(creds)
-    try:
-        spreadsheet = gs_client.open_by_key(SHEET_ID)
-        sheet = spreadsheet.worksheet("leads_usernames_(API)")
-    except Exception as e:
-        logger.error(f"Error opening sheet: {e}")
-else:
-    logger.warning("Google Sheets not configured properly!")
+    spreadsheet = gs_client.open_by_key(SHEET_ID)
+    sheet = spreadsheet.worksheet("leads_usernames_(API)")
+except Exception as e:
+    logger.error(f"Error opening sheet: {e}")
 
 def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
@@ -74,7 +70,7 @@ def start(update: Update, context: CallbackContext) -> None:
                     logger.info(f"Updated existing token row: {token}")
                 except gspread.exceptions.CellNotFound:
                     sheet.append_row([token, "", "", username, str(user_id), now])
-                    logger.info(f"Token not found, new row added: {token}")
+                    logger.info(f"Token not found, added new row: {token}")
             else:
                 sheet.append_row(["", "", "", username, str(user_id), now])
                 logger.info(f"No token, added new user {username}")
