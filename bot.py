@@ -65,23 +65,31 @@ def start(update: Update, context: CallbackContext) -> None:
                 try:
                     cell = sheet.find(token)
                     row_number = cell.row
-                    sheet.update_cell(row_number, 4, username)          # Update username
-                    sheet.update_cell(row_number, 5, str(user_id))      # Update user_id
-                    sheet.update_cell(row_number, 6, now)               # Update bot interaction time
-                    sheet.update_cell(row_number, 7, "✅ lead captured")  # <-- NEW: Update lead status
+                    sheet.update_cell(row_number, 4, username)
+                    sheet.update_cell(row_number, 5, str(user_id))
+                    sheet.update_cell(row_number, 6, now)
                     logger.info(f"Updated existing token row: {token}")
                 except gspread.exceptions.CellNotFound:
-                    # Token not found, create new row
-                    sheet.append_row([token, "", "", username, str(user_id), now, "✅ lead captured"])
+                    sheet.append_row([token, "", "", username, str(user_id), now])
                     logger.info(f"Token not found, added new row: {token}")
             else:
-                # No token passed
-                sheet.append_row(["", "", "", username, str(user_id), now, "✅ lead captured"])
+                sheet.append_row(["", "", "", username, str(user_id), now])
                 logger.info(f"No token, added new user {username}")
         except Exception as e:
             logger.error(f"Error updating sheet: {e}")
 
-    welcome_text = f"✅ Thanks {user.first_name} for your interest!\n\nPlease choose:"
+    # 🖌 Updated welcome message
+    welcome_text = f"""🎉 Welcome {user.first_name}!
+
+🚀 Thanks for your interest in TipsterGuruGoat!
+
+👉 Please take the next step:
+
+🔹 DM us directly  
+🔹 Join our VIP Channel
+
+Let's win together! 💸
+"""
     buttons = [
         [InlineKeyboardButton("➡️ DM Us", url="https://t.me/m/mhWzJm62OGEy")],
         [InlineKeyboardButton("📢 Join Channel", url="https://t.me/+k-0NPJLoj-5kNTlk")]
@@ -89,6 +97,7 @@ def start(update: Update, context: CallbackContext) -> None:
     reply_markup = InlineKeyboardMarkup(buttons)
 
     context.bot.send_message(chat_id=chat_id, text=welcome_text, reply_markup=reply_markup)
+
 
 def main() -> None:
     updater = Updater(BOT_TOKEN, use_context=True)
