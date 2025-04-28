@@ -65,15 +65,18 @@ def start(update: Update, context: CallbackContext) -> None:
                 try:
                     cell = sheet.find(token)
                     row_number = cell.row
-                    sheet.update_cell(row_number, 4, username)
-                    sheet.update_cell(row_number, 5, str(user_id))
-                    sheet.update_cell(row_number, 6, now)
+                    sheet.update_cell(row_number, 4, username)          # Update username
+                    sheet.update_cell(row_number, 5, str(user_id))      # Update user_id
+                    sheet.update_cell(row_number, 6, now)               # Update bot interaction time
+                    sheet.update_cell(row_number, 7, "✅ lead captured")  # <-- NEW: Update lead status
                     logger.info(f"Updated existing token row: {token}")
                 except gspread.exceptions.CellNotFound:
-                    sheet.append_row([token, "", "", username, str(user_id), now])
+                    # Token not found, create new row
+                    sheet.append_row([token, "", "", username, str(user_id), now, "✅ lead captured"])
                     logger.info(f"Token not found, added new row: {token}")
             else:
-                sheet.append_row(["", "", "", username, str(user_id), now])
+                # No token passed
+                sheet.append_row(["", "", "", username, str(user_id), now, "✅ lead captured"])
                 logger.info(f"No token, added new user {username}")
         except Exception as e:
             logger.error(f"Error updating sheet: {e}")
