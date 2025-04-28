@@ -91,8 +91,8 @@ def start(update: Update, context: CallbackContext) -> None:
 Let's win together! 💸
 """
     buttons = [
-        [InlineKeyboardButton("➡️ DM Us", url="https://t.me/m/mhWzJm62OGEy")],
-        [InlineKeyboardButton("📢 Join Channel", url="https://t.me/+k-0NPJLoj-5kNTlk")]
+        [InlineKeyboardButton("➡️ DM Us", url="https://t.me/m/SDmyGAMvNjY8")],
+        [InlineKeyboardButton("📢 Join Channel", url="https://t.me/+A6f68ahZ-PhkOGQ0")]
     ]
     reply_markup = InlineKeyboardMarkup(buttons)
 
