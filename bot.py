@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 
 import gspread
 from google.oauth2.service_account import Credentials
@@ -18,26 +18,14 @@ SHEET_ID = "14Lgu4JV5Nn2-r6kh8R3MHk11ai7sUul5akfNpv0xFtc"
 
 # HARDCODED Google credentials
 GOOGLE_CREDS_JSON = """
-{
-  "type": "service_account",
-  "project_id": "black-network-451123-f9",
-  "private_key_id": "7add59e64e112b3f1f877c9ad4130cb34f4ddeb4",
-  "private_key": "-----BEGIN PRIVATE KEY-----\\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCztiMpxU5jlpQ5\\nGECmmaAw0yKyrHx0AgTgUauzzdJvi5AV+e4xywny53oqE/36UIUhI9CEk3VVrEll\\n09SZxAY/4PlrUydiawjMwaAzgt8/JeaivFZhDDhrJjVTNB5e+eB7FX78U2XinlHD\\nh9mEToKWMHLAM/lLSKTmJ4xBVvRhXadPUC/9wkIjsYMRacSa942q6J3tRuSV+lSD\\n3MywTYp4mYc3V159SBzahb+Bk7WKXwCcokBd5V8R1DlwJ0zohIb+qY/b0LQqlm0R\\navnrsyKhr2L7w2GN3q6gfoI8lEX0qz1U4L+4OZ/Sl2ZETcg0TObOs5+PPZZGi7Z4\\nRLGBEOpFAgMBAAECggEAIr5aj3uOE2pb9yrVavAl/HKBUY5P1ETEqRKZEb6/yaFv\\nhpQmhRlmL8ApSePKFSAGkPjh2hPBGkJgAVACGQVBGQ33YpS1t00Oqzle7b6GRyje\\nbUVgpMwOR0bghdi8a2u/RsSJ46IC/1xQ3e7QcogULpGoybhyoKene7iXINW9EuqL\\niOnQL3uJ5i/l0OGiKGxNOqlnmohDka2oKV+G7+ObniCrs5wzqjoATQC1a6ott4D5\\nQL45o/+5uMzUZRJBv29EGPM+cKw6CywaPwHL58BhZfMLGGVOCJbrom5jrTqW3jyd\\noqnWJRtTYCLAoL/5+DqPoc/pXotPjf2aE2sCn4FbsQKBgQDfuZpK+F94X/2JY6vV\\nFhwT4d8hare9HrLFzwZ7SKWgpAKN66cZdlY6p57PbSMXY4y70UHlWHs/2l7Lx1eW\\nRJIkuORC3AQqmMjiH3l9t7WdGdWlZuDGikTCxkzjK0hV+FArL7tqhULo4BYGDVHV\\njbtW+UB/ssn9fzSJdg1hfcDWFQKBgQDNoxGoZo+7KCkP50QcI+FOiaL/RZGPwRVH\\n8D2VZAc6vaqm1Yr54b/e/w0i9UbsKKLNbNLIZTaa9eIJDn570LcgqHly9zqQOA4j\\noXEBKjh3Uzfb1FSOmbBF/S2QJNgun8rz2joaKB6QXfJpT9v22V97Y5rVViqvjGet\\nP4kyX0Z/cQKBgDgL5S1W34PmeDuM7qUpLsuEUEOs2m7UW/DWFkeYQXXm4ITxPiFQ\\n1fVHvK82Jg5b8Au1No7gBbBPYmQmgjiw4PO2Jejh+WE6eUi8ndDyztqWeEFBbpoO\\nVX998hEO7MYsuNi40niy/bodOSc2+wNGyGHXe2MCRTvuPBkbq+p6eG6pAoGBAITd\\n7WXaxtnNzCJLcnWgNU7Sna/E2pWA02hE8PWayRUKQb5EUeS9GYVTVMCWrLmgU/jZ\\nbKQwyYR8hQ0HAXCs3fZLBRXkakGPBou9H0/6YLuw2HHAktYEtaGzQYJWXBxcAP1o\\nrowCCiWLnjqvb9figdAu/ncDktcUqFSHrfUPHHTxAoGBAM1k7qMXvaKH42wd6MFE\\n2PonzgNAKJ4nVMRiyiEOHj2z6QLj5O+yPKYdMpjSa8pAfq0iU/fvCQNrcBbnHmTv\\nbpGJC3zVMysPWsfSOi5fZABu6MCQu3Kba6wpqkEBfwakvqUpbjuSSapuz5Gma6J3\\no0mABaJOvSpojKcF/9UXzIOn\\n-----END PRIVATE KEY-----\\n",
-  "client_email": "telegrambotsheetsaccess@black-network-451123-f9.iam.gserviceaccount.com",
-  "client_id": "106711742149730374889",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/telegrambotsheetsaccess%40black-network-451123-f9.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
-"""
+{ your service account JSON here }
+"""  # Keep your full JSON here, same as before
 
 # Connect to Google Sheets
 sheet = None
 try:
     creds_info = json.loads(GOOGLE_CREDS_JSON)
-    creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")  # 🔥 THIS FIX!
+    creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")  # 🔥 FIX for Heroku
     creds = Credentials.from_service_account_info(
         creds_info, scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
@@ -59,6 +47,8 @@ def start(update: Update, context: CallbackContext) -> None:
     user_id = user.id
     now = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
 
+    context.user_data['token'] = token  # Save token to user_data
+
     if sheet:
         try:
             if token:
@@ -78,7 +68,7 @@ def start(update: Update, context: CallbackContext) -> None:
         except Exception as e:
             logger.error(f"Error updating sheet: {e}")
 
-    # 🖌 Updated welcome message
+    # 🖌 Welcome message
     welcome_text = f"""🎉 Welcome {user.first_name}!
 
 🚀 Thanks for your interest in TipsterGuruGoat!
@@ -91,19 +81,48 @@ def start(update: Update, context: CallbackContext) -> None:
 Let's win together! 💸
 """
     buttons = [
-        [InlineKeyboardButton("➡️ DM Us", url="https://t.me/m/SDmyGAMvNjY8")],
-        [InlineKeyboardButton("📢 Join Channel", url="https://t.me/+A6f68ahZ-PhkOGQ0")]
+        [InlineKeyboardButton("➡️ DM Us", callback_data='dm_us')],
+        [InlineKeyboardButton("📢 Join Channel", callback_data='join_channel')]
     ]
     reply_markup = InlineKeyboardMarkup(buttons)
 
     context.bot.send_message(chat_id=chat_id, text=welcome_text, reply_markup=reply_markup)
 
+def button_click(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    query.answer()
+
+    user = query.from_user
+    username = user.username or ""
+    user_id = user.id
+    now = datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")
+    clicked_button = query.data
+
+    # Find token (saved previously)
+    token = context.user_data.get('token', '')
+
+    if sheet:
+        try:
+            # Log button click in the sheet
+            sheet.append_row([token, clicked_button, username, str(user_id), now])
+            logger.info(f"Logged button click: {clicked_button} by {username}")
+        except Exception as e:
+            logger.error(f"Error logging button click: {e}")
+
+    # Redirect to appropriate link
+    if clicked_button == "dm_us":
+        query.edit_message_text(text="Opening DM...")
+        context.bot.send_message(chat_id=user.id, text="➡️ DM Us: https://t.me/m/SDmyGAMvNjY8")
+    elif clicked_button == "join_channel":
+        query.edit_message_text(text="Joining Channel...")
+        context.bot.send_message(chat_id=user.id, text="📢 Join our Channel: https://t.me/+A6f68ahZ-PhkOGQ0")
 
 def main() -> None:
     updater = Updater(BOT_TOKEN, use_context=True)
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CallbackQueryHandler(button_click))
 
     updater.start_polling()
     logger.info("Bot started polling...")
