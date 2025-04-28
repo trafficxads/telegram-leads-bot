@@ -37,6 +37,7 @@ GOOGLE_CREDS_JSON = """
 sheet = None
 try:
     creds_info = json.loads(GOOGLE_CREDS_JSON)
+    creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")  # 🔥 THIS FIX!
     creds = Credentials.from_service_account_info(
         creds_info, scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
